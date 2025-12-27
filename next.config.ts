@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
   
   // Disable development indicators (removes the circle button in dev mode)
   devIndicators: {
-    buildActivity: false,
     buildActivityPosition: 'bottom-right',
   },
   
