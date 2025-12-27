@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
   
   // Experimental optimizations
   experimental: {
-    turbo: false,
     optimizePackageImports: [
       '@assistant-ui/react',
       '@assistant-ui/react-ai-sdk',
@@ -39,6 +38,9 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  
+  // Turbopack configuration (required when webpack config is present)
+  turbopack: {},
 };
 
 export default nextConfig;
