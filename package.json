@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.86",
+    "@ai-sdk/react": "^3.0.3",
     "@assistant-ui/react": "^0.11.51",
     "@assistant-ui/react-ai-sdk": "^1.1.19",
     "@assistant-ui/react-markdown": "^0.11.8",
