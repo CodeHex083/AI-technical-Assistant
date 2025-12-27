@@ -390,12 +390,12 @@ function AssistantContent() {
               
               // Method 1: Try runtime.composer.state.get()
               let attachment = null;
-                try {
-                  const composerState = runtime?.composer?.state?.get?.();
-                  attachment = composerState?.attachment;
-                } catch (e) {
+              try {
+                const composerState = runtime?.composer?.state?.get?.();
+                attachment = composerState?.attachment;
+              } catch (e) {
                   // Silently handle errors
-                }
+              }
               
               // Method 2: Try runtime._runtime.state.get()
               if (!attachment) {
@@ -477,12 +477,14 @@ function AssistantContent() {
   // We'll set messages via chat.setMessages() when initialMessages changes
   // This bypasses the symbolInnerMessage issue because we call setMessages directly
   // with AI SDK format messages (content as string)
+  // Type assertion to work around version mismatch between ai packages
   const chat = useChat({
-    transport,
+    transport: transport as any,
   });
 
   // Wrap chat with useAISDKRuntime to create the assistant-ui runtime
-  const runtime = useAISDKRuntime(chat);
+  // Type assertion to work around version mismatch between ai packages
+  const runtime = useAISDKRuntime(chat as any);
 
   // Store runtime in ref for fetch interceptor
   useEffect(() => {

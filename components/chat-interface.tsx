@@ -67,6 +67,7 @@ export function ChatInterface({ conversationId, onConversationCreated }: ChatInt
       const base64Images = await Promise.all(imageFiles.map(fileToBase64))
       setSelectedImages(prev => [...prev, ...base64Images])
     } catch (error) {
+      console.error('Error converting images:', error)
       alert('Failed to process images')
     }
 
@@ -125,9 +126,15 @@ export function ChatInterface({ conversationId, onConversationCreated }: ChatInt
           localStorage.removeItem('currentConversationId')
           window.location.reload()
         }
+      } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to load conversation')
+        }
       }
     } catch (error) {
-      // Silently handle load errors
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading conversation:', error)
+      }
     } finally {
       setLoadingMessages(false)
     }
@@ -239,6 +246,21 @@ export function ChatInterface({ conversationId, onConversationCreated }: ChatInt
         }
       ]
 
+      // Debug: Log what we're sending (ALWAYS show - remove condition)
+      console.log('🔍 [Frontend DEBUG] Sending message with parts:', {
+        historyCount: historyMessages.length,
+        partsCount: parts.length,
+        imageCount: parts.filter(p => p.type === 'image').length,
+        textCount: parts.filter(p => p.type === 'text').length,
+        imageLengths: parts.filter(p => p.type === 'image').map(p => p.image?.length || 0),
+        imagePreviews: parts.filter(p => p.type === 'image').map(p => p.image?.substring(0, 50) || 'none'),
+        fullParts: parts, // Show full parts array
+      });
+      
+      console.log('🔍 [Frontend DEBUG] Full request body:', JSON.stringify({
+        messages: allMessages,
+        conversationId: conversationId,
+      }, null, 2));
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -321,12 +343,18 @@ export function ChatInterface({ conversationId, onConversationCreated }: ChatInt
                   }
                 } catch (e) {
                   // Ignore parsing errors for individual chunks
+                  if (process.env.NODE_ENV === 'development') {
+                    console.warn('Error parsing stream chunk:', e)
+                  }
                 }
               }
             }
           }
         } catch (streamError) {
           streamingError = true
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error reading stream:', streamError)
+          }
           // Clean up any partial assistant message
           setMessages(prev => prev.filter(m => 
             !(m.id.startsWith('temp-assistant') && m.role === 'assistant')
@@ -352,6 +380,9 @@ export function ChatInterface({ conversationId, onConversationCreated }: ChatInt
         }
       }
     } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error sending message:', error)
+      }
       // Clean up all temporary messages (both user and assistant)
       setMessages(prev => prev.filter(m => 
         m.id !== tempUserMessage.id && 

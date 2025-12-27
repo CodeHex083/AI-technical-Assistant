@@ -43,6 +43,7 @@ npm install -g vercel
 ```
 
 Verify installation:
+
 ```bash
 vercel --version
 ```
@@ -61,6 +62,7 @@ Vercel requires an external PostgreSQL database. Recommended providers:
    - Copy the connection string (format: `postgresql://user:password@ep-xxx.region.aws.neon.tech/dbname?sslmode=require`)
 
 **Advantages:**
+
 - Serverless (scales automatically)
 - Free tier available
 - Built for serverless/edge functions
@@ -75,6 +77,7 @@ Vercel requires an external PostgreSQL database. Recommended providers:
    - Copy the connection string under "Connection string" → "URI"
 
 **Advantages:**
+
 - Free tier available
 - Additional features (auth, storage, etc.)
 - Good documentation
@@ -89,6 +92,7 @@ Vercel requires an external PostgreSQL database. Recommended providers:
    - Copy `DATABASE_URL`
 
 **Advantages:**
+
 - Simple setup
 - Good free tier
 - Easy to scale
@@ -164,18 +168,22 @@ datasource db {
 ### Method 2: Deploy via Vercel CLI
 
 1. **Login to Vercel**:
+
    ```bash
    vercel login
    ```
 
 2. **Link Project** (first time):
+
    ```bash
    vercel link
    ```
+
    - Select or create a project
    - Choose settings (use defaults)
 
 3. **Deploy to Preview**:
+
    ```bash
    vercel
    ```
@@ -207,12 +215,12 @@ datasource db {
 
 Add these in **Vercel Dashboard** → **Your Project** → **Settings** → **Environment Variables**:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:5432/db?sslmode=require` |
-| `SESSION_SECRET` | Secret for session encryption (min 32 chars) | Generate with: `openssl rand -base64 64` |
-| `OPENAI_API_KEY` | Your OpenAI API key | `sk-...` |
-| `NODE_ENV` | Environment mode | `production` |
+| Variable         | Description                                  | Example                                               |
+| ---------------- | -------------------------------------------- | ----------------------------------------------------- |
+| `DATABASE_URL`   | PostgreSQL connection string                 | `postgresql://user:pass@host:5432/db?sslmode=require` |
+| `SESSION_SECRET` | Secret for session encryption (min 32 chars) | Generate with: `openssl rand -base64 64`              |
+| `OPENAI_API_KEY` | Your OpenAI API key                          | `sk-...`                                              |
+| `NODE_ENV`       | Environment mode                             | `production`                                          |
 
 ### Adding Environment Variables
 
@@ -255,6 +263,7 @@ You can set different values for Production, Preview, and Development:
 Add a build script that runs migrations:
 
 1. **Update `package.json`**:
+
    ```json
    {
      "scripts": {
@@ -269,18 +278,20 @@ Add a build script that runs migrations:
 ### Option 2: Run Migrations Manually (First Time)
 
 1. **Install Vercel CLI**:
+
    ```bash
    npm install -g vercel
    ```
 
 2. **Run migrations**:
+
    ```bash
    # Set environment variables locally
    export DATABASE_URL="your-database-url"
-   
+
    # Run migrations
    npx prisma migrate deploy
-   
+
    # Seed database (optional)
    npm run db:seed
    ```
@@ -290,11 +301,13 @@ Add a build script that runs migrations:
 In Vercel Dashboard → Project Settings → General:
 
 **Build Command**:
+
 ```bash
 npm install && npx prisma generate && npx prisma migrate deploy && npm run build
 ```
 
 **Install Command**:
+
 ```bash
 npm install
 ```
@@ -334,12 +347,14 @@ psql $DATABASE_URL
 If you need initial data (admin user, etc.):
 
 **Option A: Via Vercel CLI**:
+
 ```bash
 vercel env pull .env.local
 npx prisma db seed
 ```
 
 **Option B: Add to build process**:
+
 ```json
 {
   "scripts": {
@@ -349,6 +364,7 @@ npx prisma db seed
 ```
 
 **Option C: Manual seeding**:
+
 ```bash
 # Connect to your production database
 export DATABASE_URL="your-production-database-url"
@@ -379,6 +395,7 @@ npm run db:seed
 Vercel will provide DNS records to add:
 
 **For Root Domain** (`example.com`):
+
 ```
 Type: A
 Name: @
@@ -386,6 +403,7 @@ Value: 76.76.21.21
 ```
 
 **For Subdomain** (`www.example.com`):
+
 ```
 Type: CNAME
 Name: www
@@ -419,6 +437,7 @@ Value: cname.vercel-dns.com
 **Error**: `Module not found` or `Cannot find module`
 
 **Solution**:
+
 - Check `package.json` dependencies
 - Ensure all imports are correct
 - Clear `.next` cache: `rm -rf .next`
@@ -426,6 +445,7 @@ Value: cname.vercel-dns.com
 **Error**: `Prisma Client not generated`
 
 **Solution**:
+
 - Add to build command: `prisma generate`
 - Or add to `package.json`: `"postinstall": "prisma generate"`
 
@@ -434,6 +454,7 @@ Value: cname.vercel-dns.com
 **Error**: `Can't reach database server`
 
 **Solution**:
+
 1. Verify `DATABASE_URL` is set correctly in Vercel
 2. Check database provider allows connections from Vercel IPs
 3. For Neon/Supabase: Ensure connection string includes `?sslmode=require`
@@ -444,6 +465,7 @@ Value: cname.vercel-dns.com
 **Error**: `process.env.VARIABLE is undefined`
 
 **Solution**:
+
 1. Verify variable is set in Vercel Dashboard
 2. Ensure variable is added to correct environment (Production/Preview)
 3. Redeploy after adding variables
@@ -454,6 +476,7 @@ Value: cname.vercel-dns.com
 **Error**: Tables don't exist
 
 **Solution**:
+
 1. Add `prisma migrate deploy` to build command
 2. Or run manually: `npx prisma migrate deploy`
 3. Verify `DATABASE_URL` is correct
@@ -463,6 +486,7 @@ Value: cname.vercel-dns.com
 **Error**: `Function exceeded maximum duration`
 
 **Solution**:
+
 1. Vercel Hobby plan: 10s timeout
 2. Vercel Pro plan: 60s timeout
 3. Optimize database queries
@@ -620,5 +644,3 @@ vercel dev
 **Last Updated**: December 2025  
 **Vercel Compatibility**: Next.js 16+  
 **Recommended Database**: Neon, Supabase, or Railway
-
-
