@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
   
   // Experimental optimizations
   experimental: {
+    turbo: false,
     optimizePackageImports: [
       '@assistant-ui/react',
       '@assistant-ui/react-ai-sdk',
