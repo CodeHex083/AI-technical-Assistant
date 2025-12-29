@@ -19,8 +19,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function checkAuth() {
-      // Skip auth check on login and signup pages
-      if (pathname === '/login' || pathname === '/signup') {
+      // Skip auth check on login, signup, forgot-password, and reset-password pages
+      if (
+        pathname === '/login' ||
+        pathname === '/signup' ||
+        pathname === '/forgot-password' ||
+        pathname.startsWith('/reset-password')
+      ) {
         setLoading(false)
         return
       }
@@ -45,7 +50,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth()
   }, [pathname, router])
 
-  if (loading && pathname !== '/login') {
+  if (
+    loading &&
+    pathname !== '/login' &&
+    pathname !== '/signup' &&
+    pathname !== '/forgot-password' &&
+    !pathname.startsWith('/reset-password')
+  ) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
